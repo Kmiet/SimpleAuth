@@ -1,10 +1,5 @@
-defmodule AuthServer.RouterTest do
-  use ExUnit.Case, async: true
-  use Plug.Test
-
-  alias AuthServer.Router
-
-  @router_opts Router.init([])
+defmodule AuthServerTest.RouterTest do
+  use AuthServerTest.RouterCase, async: true
 
   test "reaches endpoint" do
     conn = 

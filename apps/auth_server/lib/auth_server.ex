@@ -7,7 +7,7 @@ defmodule AuthServer do
       {Plug.Cowboy, scheme: :http, plug: Router, options: [port: Application.get_env(:auth_server, :port)]}
     ]
 
-    options = [strategy: :one_for_one]
+    options = [strategy: :one_for_one, name: AuthServer.Supervisor]
     Supervisor.start_link(children, options)
   end
 end
