@@ -9,4 +9,12 @@ defmodule AuthServerTest.RouterTest do
     assert conn.status == 200
     assert conn.resp_body == "AuthServer"
   end
+
+  test "" do
+    conn =
+      conn(:get, "/notFound")
+      |> Router.call(@router_opts)
+
+    assert conn.status == 404
+  end
 end
