@@ -1,0 +1,80 @@
+:root {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  --color1: coral;
+  --color2: red;
+  --color3: aquamarine;
+  --form-width: 250px;
+}
+/*
+html {
+  margin: 0;
+  display: flex;
+  justify-content: center;
+}
+/**/
+body {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  background: #121212; /* fallback for old browsers */
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}/*
+*/
+
+body {
+  background-image: -webkit-linear-gradient(to bottom, #121212, #343434); /* Chrome 10-25, Safari 5.1-6 */
+  background-image: linear-gradient(to bottom, #121212, #232323); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+
+form {
+  margin: auto;
+  padding: 20px;
+  width: var(--form-width);
+}
+
+label {
+  font-size: 14px;
+  padding: 5px;
+}
+
+input {
+  display: block;
+  
+  font-size: 15px;
+
+  width: 230px;
+  margin: 0px;
+  padding: 9px;
+  border: 1px solid;
+  border-color: var(--color1);
+  border-radius: 5px;
+  outline: none;
+}
+
+button {
+  display: block;
+  background: var(--color3);
+  font-size: 15px;
+  padding: 5px 10px;
+  color: var(--color2);
+  border: 1px solid;
+  border-color: var(--color3);
+  border-radius: 5px;
+  outline: none;
+}
+
+footer {
+  text-align: center;
+  margin-left: calc(50% - var(--form-width)/2);
+  margin-right: calc(50% - var(--form-width)/2);
+}
+
+.k {
+  color: purple
+}
+
+.e {
+  color: green
+}
