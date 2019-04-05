@@ -8,7 +8,7 @@ export default function Input({className, id, label, name, onChange, placeholder
         className={"input " + className ? className : ""} 
         id={id} 
         name={name} 
-        type={type} 
+        type={type === "password" ? "password" : "text"} 
         onChange={onChange}
         placeholder={placeholder} 
         required={required}

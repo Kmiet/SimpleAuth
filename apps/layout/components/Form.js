@@ -1,7 +1,8 @@
-export default function Form({children, error}) {
+export default function Form({children, error, header}) {
   return (
     <form>
-      {error !== "" ? <p>{error}</p> : ""}
+      {header ? <p id="header">{header}</p> : ""}
+      {error  ? <p id="error">{error}</p> : ""}
       {children}
     </form>
   )
