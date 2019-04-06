@@ -49,22 +49,26 @@ export default class LoginForm extends React.Component {
         <Input 
           label="Email"
           type="email" 
-          name="email" 
+          name="email"
+          placeholder="example@example.com" 
           onChange={this.handleChange}
-          value={this.state.email} 
+          value={this.state.email}
+          required 
           />
         <Input 
           label="Password"
           type="password" 
-          name="password" 
-          onChange={this.handleChange} 
-          value={this.state.password} 
+          name="password"
+          placeholder="minimum 8 characters long"
+          onChange={this.handleChange}
+          value={this.state.password}
+          required
           />
         <Link id="forgot" to="/forgot-password">Forgot your password?</Link>
         <Button 
           onClick={this.handleSubmit} 
           text="Login"
-          disabled={this.state.disabledButton} 
+          disabled={this.state.disabledButton}
           />
         <Link id="signup" to="/signup"><Button text="Sign up" /></Link>
         <Divider text="or"/>

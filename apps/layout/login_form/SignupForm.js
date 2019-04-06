@@ -57,21 +57,24 @@ export default class SignUp extends React.Component {
           type="email" 
           name="email" 
           onChange={this.handleChange}
-          value={this.state.email} 
+          value={this.state.email}
+          required
           />
         <Input 
           label="Password"
           type="password" 
           name="password" 
           onChange={this.handleChange} 
-          value={this.state.password} 
+          value={this.state.password}
+          required
           />
         <Input 
           label="Confirm password"
           type="password" 
           name="confirmPassword" 
           onChange={this.handleChange} 
-          value={this.state.confirmPassword} 
+          value={this.state.confirmPassword}
+          required
           />
         <Button 
           onClick={this.handleSubmit} 

@@ -23,11 +23,11 @@ form {
   border-radius: 6px;
   width: var(--form-width);
   background: var(--form-bg);
-  box-shadow: 0px 0px 60px -10px #000;
+  box-shadow: 0px 0px 40px -10px #000;
 }
 
 form > p#header {
-  margin: 10px 0px 20px 0px;
+  margin: 5px 0px 10px 0px;
   text-align: center;
   font-weight: 500;
   font-size: 1.2rem;
@@ -35,6 +35,7 @@ form > p#header {
 }
 
 form > p#error {
+  margin: 8px 0px;
   display: block;
   border: 1.5px solid rgb(100, 0, 0);
   border-radius: 3px;
@@ -43,28 +44,16 @@ form > p#error {
   color: rgb(100, 0, 0);
 }
 
-fieldset {
-  margin: 10px 0px;
-  border: 1px solid var(--secondary);
-  border-radius: 4px;
-  padding: 0px;
-}
-
-fieldset:hover {
-  color: var(--color3);
-  border-color: var(--color3);
-}
-
-fieldset:focus-within {
-  border-color: var(--primary);
-}
-
-legend {
-  font-size: 0.9rem;
-  margin-left: 5px;
-  margin-bottom: -8px;
+label {
+  display: block;
+  position: absolute;
+  font-size: 1rem;
+  margin: -42px 0px 0px 10px;
   padding: 3px;
+  background: var(--form-bg);
   color: var(--color3);
+  transition: 0.2s ease-in;
+  pointer-events: none;
 }
 
 input {
@@ -72,10 +61,18 @@ input {
   width: calc(100% - 10px);
   height: 100%;
   background: transparent;
-  border: none;
+  border: 1px solid var(--secondary);
+  border-radius: 2px;
   outline: none;
   padding: 10px 0px 10px 10px;
+  margin: 8px 0px;
   color: var(--color3);
+  transition: 0.3s ease-in;
+}
+
+input:hover {
+  color: var(--color3);
+  border-color: var(--color3);
 }
 
 input:-webkit-autofill {
@@ -84,22 +81,56 @@ input:-webkit-autofill {
   color: var(--color3);
 }
 
+input::placeholder {
+  font-size: 0.95rem;
+  font-family: 'Lato', sans-serif;
+  color: var(--color3);
+  opacity: 0;
+  transition: opacity 0s;
+  visibility: hidden;
+}
+
+input:focus,
+input:valid {
+  border-color: var(--primary);
+}
+
+input:focus::placeholder,
+input:valid::placeholder {
+  visibility: visible;
+  opacity: 0.5;
+  transition: opacity 0.25s ease-out 0.25s;
+}
+
+input:focus + label,
+input:valid + label {
+  font-size: 0.9rem;
+  margin: -61px 0px 0px 10px;
+  visibility: visible;
+  transition: 0.25s ease-out;
+}
+
 button {
   display: block;
-  margin: 15px 0px;
+  margin: 25px 0px 10px 0px;
   width: var(--form-width);
   color: var(--form-bg);
-  letter-spacing: 3px;
-  font-weight: 500;
+  letter-spacing: -0.3px;
+  font-weight: 600;
   font-family: 'Lato', sans-serif;
-  font-size: 1.1rem;
+  font-size: 1rem;
   padding: 10px;
   background: var(--primary);
   border: none;
   border-radius: 4px;
   outline: none;
-  box-shadow: 0px 0px 15px -5px #000;
+  box-shadow: 0px 0px 20px -8px #000;
   cursor: pointer;
+  transition: 0.3s ease-in;
+}
+
+button + a > button {
+  margin: 10px 0px;
 }
 
 button:hover {
@@ -112,18 +143,28 @@ button:disabled {
 }
 
 a {
+  display: block;
+  width: fit-content;
+  margin: 15px auto 0px auto;
   color: var(--color3);
+  color: var(--primary);
+  text-decoration: none;
+  transition: 0.3s ease-in;
+}
+
+a:hover {
+  color: var(--primary);
+  color: rgb(153, 103, 18);
+  text-decoration: none;
 }
 
 #forgot {
-  display: block;
-  margin: -5px 0px 25px 0px;
+  margin: -3px 0px 0px 2px;
   font-size: 0.8rem;
 }
 
 #signup {
   margin: 0px auto;
-  text-decoration: none;
 }
 
 footer {
@@ -135,12 +176,13 @@ footer {
 }
 
 .divider {
+  margin-top: -10px;
   position: relative;
   width: var(--form-width);
-  height: 50px;
+  height: 40px;
   color: var(--secondary);
   text-transform: uppercase;
-  letter-spacing: 2px;
+  letter-spacing: 1px;
 
   line-height: 50px;
   text-align: center;

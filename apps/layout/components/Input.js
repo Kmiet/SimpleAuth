@@ -2,8 +2,7 @@ import { Fragment } from 'react'
 
 export default function Input({className, id, label, name, onChange, placeholder, required, type}) {
   return (
-    <fieldset>
-      { label ? (<legend>{label}</legend>) : "" }
+    <Fragment>
       <input 
         className={"input " + className ? className : ""} 
         id={id} 
@@ -13,6 +12,7 @@ export default function Input({className, id, label, name, onChange, placeholder
         placeholder={placeholder} 
         required={required}
         />
-    </fieldset>
+      { label ? (<label>{label}</label>) : "" }
+    </Fragment>
   )
 }

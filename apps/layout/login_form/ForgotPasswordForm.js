@@ -46,7 +46,8 @@ export default class ForgotPasswordForm extends React.Component {
           type="email" 
           name="email" 
           onChange={this.handleChange}
-          value={this.state.email} 
+          value={this.state.email}
+          required
           />
         <Button 
           onClick={this.handleSubmit} 
