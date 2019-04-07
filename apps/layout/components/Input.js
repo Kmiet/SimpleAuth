@@ -11,6 +11,7 @@ export default function Input({className, id, label, name, onChange, placeholder
         onChange={onChange}
         placeholder={placeholder} 
         required={required}
+        spellCheck={false}
         />
       { label ? (<label>{label}</label>) : "" }
     </Fragment>
