@@ -3,12 +3,14 @@ defmodule Db.Models.Identity do
   import Ecto.Changeset
 
   alias Db.Repo
-  alias Db.Models.Identity
-  alias Db.Models.Provider
+  alias Db.Models.{Identity, User}
 
   schema "indenties" do
-    field :verified_user, :boolean, default: false
-    field :data, :map
+    field :sub, :string
+    field :provider, :string
+    field :verified_email, :boolean, default: false
+
+    belongs_to :user, User
   end
 
   def changeset() do

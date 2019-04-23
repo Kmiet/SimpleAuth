@@ -5,7 +5,6 @@ defmodule Db.Models.User do
   alias Db.Repo
   alias Db.Types.{Gender, Address} 
   alias Db.Models.User
-  alias Db.Models.Identity
 
   schema "users" do
     field :email, :string
