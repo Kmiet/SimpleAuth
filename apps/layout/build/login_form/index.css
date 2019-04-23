@@ -2,10 +2,12 @@
   font-family: 'Lato', sans-serif;
   font-size: 16px;
   height: 100%;
-  --primary: rgb(170, 115, 20);
-  --secondary: #555;
+  --primary: rgb(210, 140, 20);
+  --primary_25_dark: rgb(157, 105, 14);
+  --primary_5_light: rgb(233, 155, 23);
+  --secondary: #6f6f6f;
   --form-bg: #2f2f2f;
-  --color3: #777;
+  --color3: #9f9f9f;
   --form-width: 280px;
 }
 
@@ -19,7 +21,7 @@ body {
 }
 
 form {
-  margin: 40px auto;
+  margin: 10vh auto 40px;
   padding: 30px;
   border-radius: 6px;
   width: var(--form-width);
@@ -138,11 +140,11 @@ button + a > button {
 }
 
 button:hover {
-  background: rgb(153, 103, 18);
+  background: var(--primary_5_light);
 }
 
 button:disabled {
-  background: rgba(170, 115, 20, 0.5);
+  background: var(--primary_25_dark);
   cursor: default;
 }
 
@@ -150,15 +152,13 @@ a {
   display: block;
   width: fit-content;
   margin: 15px auto 0px auto;
-  color: var(--color3);
   color: var(--primary);
   text-decoration: none;
   transition: 0.3s ease-in;
 }
 
 a:hover {
-  color: var(--primary);
-  color: rgb(153, 103, 18);
+  color: var(--primary_5_light);
   text-decoration: none;
 }
 
@@ -187,7 +187,6 @@ footer {
   color: var(--secondary);
   text-transform: uppercase;
   letter-spacing: 1px;
-
   line-height: 50px;
   text-align: center;
 }
@@ -208,4 +207,35 @@ footer {
 
 .divider::after {
   right: 0;
+}
+
+@media only screen and (max-width: 600px) {
+  :root {
+    font-size: 14px;
+  }
+
+  body {
+    background-image: none;
+  }
+
+  form {
+    margin: 0px auto 30px;
+    padding: 30px 20px;
+    box-shadow: none;
+    background: transparent;
+  }
+
+  label {
+    margin: -39px 0px 0px 10px;
+    background: #1f1f1f;
+  }
+
+  input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0px 100px #1f1f1f inset;
+  }
+
+  input:focus + label,
+  input:valid + label {
+    margin: -58px 0px 0px 10px;
+  }
 }

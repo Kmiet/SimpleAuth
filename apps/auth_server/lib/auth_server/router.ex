@@ -1,7 +1,7 @@
 defmodule AuthServer.Router do
   use Plug.Router
 
-  alias AuthServer.Controllers.OpenIDController
+  alias AuthServer.Controllers.OAuthController
   alias AuthServer.Controllers.SignUpController
 
   plug Plug.Static, at: "/", from: "../layout/build/login_form"
@@ -9,7 +9,7 @@ defmodule AuthServer.Router do
   plug :match
   plug :dispatch
 
-  forward "/openid", to: OpenIDController 
+  forward "/oauth", to: OAuthController 
 
   forward "/signup", to: SignUpController
 

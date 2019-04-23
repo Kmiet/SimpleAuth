@@ -1,7 +1,7 @@
 defmodule AuthServerTest.RouterTest do
   use AuthServerTest.RouterCase, async: true
 
-  test "reaches endpoint" do
+  test "Reaches endpoint" do
     conn = 
       conn(:get, "/") 
       |> Router.call(@router_opts)
@@ -10,7 +10,7 @@ defmodule AuthServerTest.RouterTest do
     assert conn.resp_body == "AuthServer"
   end
 
-  test "" do
+  test "Wrong URI" do
     conn =
       conn(:get, "/notFound")
       |> Router.call(@router_opts)

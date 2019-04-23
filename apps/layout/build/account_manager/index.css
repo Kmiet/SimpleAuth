@@ -1,0 +1,49 @@
+:root {
+  font-family: 'Lato', sans-serif;
+  font-size: 16px;
+  height: 100%;
+  --primary: rgb(210, 140, 20);
+  --primary_5_light: rgb(233, 155, 23);
+  --primary_10_light: rgb(235, 165, 46);
+  --primary_15_light: rgb(237, 175, 69);
+  --secondary_15_dark: #494949;
+  --secondary_10_dark: #565656;
+  --secondary_5_dark: #626262;
+  --secondary: #6f6f6f;
+  --secondary_5_light: #7b7b7b;
+  --secondary_10_light: #888888;
+  --secondary_15_light: #959595;
+  --form-bg: #2f2f2f;
+  --color3: #9f9f9f;
+  --color3_5_light: #ababab;
+  --color3_10_light: #b8b8b8;
+  --color3_15_light: #c5c5c5;
+  --form-width: 280px;
+  --navbar-height-full: 150px;
+  --footer-height: 10vh;
+}
+
+body {
+  margin: 0;
+  background: #1f1f1f;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-image: -webkit-linear-gradient(to bottom, #1f1f1f, #2f2f2f);
+  background-image: linear-gradient(to bottom, #1f1f1f, #2f2f2f);
+}
+
+@media only screen and (max-width: 1600px) {
+  
+}
+
+@media only screen and (max-width: 1280px) {
+  
+}
+
+@media only screen and (max-width: 960px) {
+
+}
+
+@media only screen and (max-width: 600px) {
+  
+}
