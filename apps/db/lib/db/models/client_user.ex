@@ -5,7 +5,8 @@ defmodule Db.Models.ClientUser do
     alias Db.Repo
     alias Db.Models.{User, Client}
   
-    schema "client_user" do
+    @primary_key false
+    schema "client_users" do
       field :is_banned, :boolean, default: false
       field :banned_due, :naive_datetime
       field :consent, :boolean, default: false

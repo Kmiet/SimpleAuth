@@ -3,7 +3,7 @@ use Mix.Config
 import_config "config.secret.exs"
 import_config "test.exs"
 
-config :db, ecto_repos: [Db.Repo]
+config :db, ecto_repos: [Db.Repo], migration_primary_key: [name: :id, type: :binary_id]
 
 # This configuration is loaded before any dependency and is restricted
 # to this project. If another project depends on this project, this

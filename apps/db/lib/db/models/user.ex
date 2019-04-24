@@ -3,7 +3,7 @@ defmodule Db.Models.User do
   import Ecto.Changeset
 
   alias Db.Repo
-  alias Db.Types.{Gender, Address} 
+  alias Db.Types.Gender
   alias Db.Models.User
 
   schema "users" do
