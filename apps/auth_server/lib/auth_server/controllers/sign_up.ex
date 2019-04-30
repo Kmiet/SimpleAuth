@@ -5,7 +5,7 @@ defmodule AuthServer.Controllers.SignUpController do
   plug :dispatch
 
   get "/" do
-    send_resp(conn, 200, "SignUp")
+    send_file(conn, 200, "../layout/build/login_form/index.html")
   end 
 
 end

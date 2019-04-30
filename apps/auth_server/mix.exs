@@ -29,6 +29,7 @@ defmodule AuthServer.MixProject do
     [
       {:db, in_umbrella: true},
       {:plug_cowboy, "~> 2.0.0"},
+      {:token, in_umbrella: true},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"},
       # {:sibling_app_in_umbrella, in_umbrella: true},
     ]

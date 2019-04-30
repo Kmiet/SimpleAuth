@@ -14,7 +14,35 @@ defmodule AuthServer.Router do
   forward "/signup", to: SignUpController
 
   get "/" do
-    send_resp(conn, 200, "AuthServer")
+    conn
+    |> put_resp_header("location", "http://localhost:4000/login")
+    |> send_resp(302, "")
+  end
+
+  get "/token" do
+    res = Token.create(%{
+      "sub" => "user",
+      "aud" => "client"
+    })
+    send_resp conn, 200, res
+  end
+
+  post "/token" do
+    {:ok, body, conn} = Plug.Conn.read_body(conn)
+    with %{"token" => token} <- Jason.decode!(body) do
+      with {:ok, claims} <- Token.validate_and_verify(token, %{
+        "aud" => "client",
+        "sub" => "user",
+        "iss" => "https://simpleauth.org"
+      }) 
+      do
+        send_resp conn, 200, Jason.encode!(claims)
+      else
+        _ -> send_resp conn, 401, "401 Unauthorized"
+      end
+    else
+      _ -> send_resp conn, 400, "400 Bad Message"
+    end
   end
 
   get "/login" do
