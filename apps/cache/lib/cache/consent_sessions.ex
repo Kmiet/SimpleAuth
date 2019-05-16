@@ -58,11 +58,11 @@ defmodule Cache.ConsentSessions do
   end
 
   defp schedule_cleanup do
-    Process.send_after(self(), :cleanup, 300000) # In 5 minutes
+    Process.send_after(self(), :cleanup, 180000) # In 3 minutes
   end
 
   defp remove_expired do
     # Match spec[{ element, condition, [] }]
-    :ets.match_delete(ConsentSessionCache, [{ {'_', '_', '$1'}, [{'>', Joken.current_time, '$1'}], [] }])
+    :ets.select_delete(:consent_sessions, [{{:_, :_, :"$1"}, [{:>, Joken.current_time, :"$1"}], [true]}])
   end
 end

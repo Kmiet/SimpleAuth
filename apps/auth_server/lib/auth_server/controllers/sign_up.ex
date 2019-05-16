@@ -63,20 +63,35 @@ defmodule AuthServer.Controllers.SignUpController do
       form_token when not is_nil(form_token) <- fetch_cookie(conn, @csrf_cookie_key),
       true <- form_token == csrf_token
     do
-      with uid <- Repo.insert!(%User{
-          email: email,
-          password: password
-        }).id
+      with changeset <- User.changeset(
+          %User{}, 
+          %{
+            :email => email, 
+            :password => password
+          }
+        ),
+        {:ok, user_schema} <- Repo.insert(changeset)
       do
+        uid = user_schema.id
         confirmation_id = :crypto.strong_rand_bytes(24) |> Base.url_encode64
         EmailConfirmations.insert(confirmation_id, uid)
-        # SignUpEmail.prepare(email, "http://localhost:4000/signup/confirm?id=" <> confirmation_id)
-        # |> Mailer.deliver
+        Task.start(fn ->
+          SignUpEmail.prepare(email, "http://localhost:4000/signup/confirm?id=" <> confirmation_id)
+          |> Mailer.deliver
+        end)
         conn
         |> delete_resp_cookie(@csrf_cookie_key, [http_only: true]) #, secure: true])
         |> send_resp(201, "")
       else
-        {:error, changeset} -> send_resp(conn, 500, changeset)
+        {:error, %{:errors => errors}} -> 
+          err = Enum.reduce(errors, %{}, fn {k, v}, acc -> 
+            Map.put(acc, k, elem(v, 0))
+          end)
+          send_resp(conn, 500, Jason.encode!(%{
+            "errors" => err
+            })
+          )
+        _ -> send_resp(conn, 500, "Unknown")
       end
     else
       _ -> send_resp(conn, 403, "")

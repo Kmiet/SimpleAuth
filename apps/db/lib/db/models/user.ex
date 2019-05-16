@@ -20,8 +20,25 @@ defmodule Db.Models.User do
     timestamps([type: :utc_datetime])
   end
 
-  def changeset() do
-    
+  def changeset(user, params \\ %{}) do
+    user
+    |> cast(params, [
+      :email, 
+      :verified_email, 
+      :username, :first_name, 
+      :last_name, 
+      :birth_date, 
+      :gender,
+      :phone,
+      :password
+    ])
+    |> validate_required([:email, :password])
+    |> validate_format(:email, ~r/@/)
+    |> unique_constraint(:email)
+  end
+
+  defp hash_password(password) do
+
   end
 
 end

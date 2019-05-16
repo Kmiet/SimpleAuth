@@ -7,7 +7,7 @@ defmodule Cache.EmailConfirmations do
 
   def init(state) do
     :ets.new(:email_confirmations, [:set, :public, :named_table])
-    remove_expired()
+    
     schedule_cleanup()
     {:ok, state}
   end
@@ -54,16 +54,15 @@ defmodule Cache.EmailConfirmations do
 
   def insert(key, value) do
     # {key, value, expiration_time}
-    GenServer.cast(EmailConfirmationCache, {:insert, {key, value, (72 + Joken.current_time) }})
+    GenServer.cast(EmailConfirmationCache, {:insert, {key, value, (7200 + Joken.current_time) }})
   end
 
   defp schedule_cleanup do
-    Process.send_after(self(), :cleanup, 72000) # In 2 hours
+    Process.send_after(self(), :cleanup, 1800000) # In 30 minutes
   end
 
   defp remove_expired do
     # Match spec[{ element, condition, [] }]
-    c_time = Joken.current_time
-    :ets.select_delete(:email_confirmations, [{{'$1', '$2', '$3'}, :ets.fun2ms(fn({_, _, V}) -> V > c_time end), [true]}])
+    :ets.select_delete(:email_confirmations, [{{:_, :_, :"$1"}, [{:>, Joken.current_time, :"$1"}], [true]}])
   end
 end
