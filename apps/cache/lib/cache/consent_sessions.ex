@@ -1,12 +1,12 @@
-defmodule Cache.AuthCodes do
+defmodule Cache.ConsentSessions do
   use GenServer
 
   def start_link(state) do
-    GenServer.start_link(__MODULE__, state, name: CodeCache)
+    GenServer.start_link(__MODULE__, state, name: ConsentSessionCache)
   end
 
   def init(state) do
-    :ets.new(:auth_codes, [:set, :public, :named_table])
+    :ets.new(:consent_sessions, [:set, :public, :named_table])
 
     schedule_cleanup()
     {:ok, state}
@@ -14,20 +14,20 @@ defmodule Cache.AuthCodes do
 
   def handle_call({:get, key}, _from, state) do
     reply = 
-      case :ets.lookup(:auth_codes, key) do
+      case :ets.lookup(:consent_sessions, key) do
         [] -> nil
-        [{_key, code, _invalidation}] -> code
+        [{_key, consent_session, _invalidation}] -> consent_session
       end
     {:reply, reply, state}
   end
 
   def handle_cast({:delete, key}, state) do
-    :ets.delete(:auth_codes, key)
+    :ets.delete(:consent_sessions, key)
     {:noreply, state}
   end
 
   def handle_cast({:insert, object}, state) do
-    :ets.insert(:auth_codes, object)
+    :ets.insert(:consent_sessions, object)
     {:noreply, state}
   end
 
@@ -41,20 +41,20 @@ defmodule Cache.AuthCodes do
   # Helpers
 
   def all do
-    :ets.tab2list(CodeCache)
+    :ets.tab2list(ConsentSessionCache)
   end
 
   def delete(key) do
-    GenServer.cast(CodeCache, {:delete, key})
+    GenServer.cast(ConsentSessionCache, {:delete, key})
   end
 
   def get(key) do
-    GenServer.call(CodeCache, {:get, key}, 500)
+    GenServer.call(ConsentSessionCache, {:get, key}, 500)
   end
 
   def insert(key, value) do
     # {key, value, expiration_time}
-    GenServer.cast(CodeCache, {:insert, {key, value, (300 + Joken.current_time) }})
+    GenServer.cast(ConsentSessionCache, {:insert, {key, value, (300 + Joken.current_time) }})
   end
 
   defp schedule_cleanup do
@@ -63,6 +63,6 @@ defmodule Cache.AuthCodes do
 
   defp remove_expired do
     # Match spec[{ element, condition, [] }]
-    :ets.match_delete(CodeCache, [{ {'_', '_', '$1'}, [{'>', Joken.current_time, '$1'}], [] }])
+    :ets.match_delete(ConsentSessionCache, [{ {'_', '_', '$1'}, [{'>', Joken.current_time, '$1'}], [] }])
   end
 end

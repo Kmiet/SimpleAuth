@@ -1,9 +1,11 @@
 defmodule AuthServer.Controllers.OAuthController do
   use Plug.Router
 
+  import Ecto.Query
+
   alias Db.Repo
-  alias Db.Models.{Client, ClientUser, User}
-  alias Cache
+  alias Db.Models.{Client, ClientUser, User, Session}
+  alias Cache.{AuthCodes, ConsentSessions, Sessions}
   alias Token
 
   @csrf_cookie_key "ftk"
@@ -19,11 +21,12 @@ defmodule AuthServer.Controllers.OAuthController do
 
   # User Consent
   post "/authorize" do
-    conn = Plug.Conn.fetch_query_params(conn)
-    |> put_resp_header("content-type", "application/json")
+    new = []
+    conn = Plug.Conn.fetch_query_params(conn) |> put_resp_header("content-type", "application/json")
     with %{"consent" => consent_id} <- conn.query_params,
-      consent_data when not is_nil(consent_data) <- Cache.ConsentSessions.get(consent_id),
-      {client_id, user_id, grant_type, redirect_uri, state} <- consent_data,
+      consent_data when not is_nil(consent_data) <- ConsentSessions.get(consent_id),
+      {client_id, client_secret, user_id, grant_type, redirect_uri, state} <- consent_data,
+
       consent_token when not is_nil(consent_token) <- fetch_cookie(conn, consent_id),
       {:ok, %{"scope" => client_scopes, "consent" => consent}} = Token.validate_and_verify(consent_token, %{
         "client_id" => client_id,
@@ -31,14 +34,12 @@ defmodule AuthServer.Controllers.OAuthController do
       }),
       true <- consent_matches?(client_scopes, consent, new)
     do
-      Cache.ConsentSessions.delete(consent_id)
-      case grant_type do
-        "code" ->
-        "id_token" ->
-      end
+      ConsentSessions.delete(consent_id)
+
+      res_uri = build_response_uri(redirect_uri, grant_type, client_id, client_secret, user_id, state)
       conn
-      |> put_resp_header("location", redirect_uri)
-      |> send_resp(302)
+      |> put_resp_header("location", res_uri)
+      |> send_resp(302, "")
     else
       _ -> send_resp(conn, 401, "")
     end 
@@ -48,6 +49,7 @@ defmodule AuthServer.Controllers.OAuthController do
     with {:ok, {email, password, csrf_token}} <- fetch_credentials(conn),
       form_token when not is_nil(form_token) <- fetch_cookie(conn, @csrf_cookie_key),
       true <- form_token == csrf_token,
+
       user_data when not is_nil(user_data) <- Repo.one(
         from u in User, 
           where: u.email == ^email,
@@ -55,13 +57,20 @@ defmodule AuthServer.Controllers.OAuthController do
       ),
       true <- user_data.password == password
     do
-      conn
-      |> put_resp_cookie("id", Token.create(%{
-          "aud" => "https://simpleauth.org/",
-          "sub" => user_data.id
-        }, 43200), [domain: ".simpleauth.org", http_only: true, max_age: 43200, path: "/", secure: true])
-      |> put_resp_header("location", "https://accounts.simpleauth.org/")
-      |> send_resp(302, "")
+      with sid <- Repo.insert!(%Session{}).id,
+        _ <- Sessions.insert(sid, [])
+      do
+        conn
+        |> put_resp_cookie("id", Token.create(%{
+            "aud" => "https://simpleauth.org/",
+            "sub" => user_data.id,
+            "sid" => sid
+          }, 43200), [domain: ".simpleauth.org", http_only: true, max_age: 43200, path: "/", secure: true])
+        |> put_resp_header("location", "https://accounts.simpleauth.org/")
+        |> send_resp(302, "")
+      else
+        _ -> send_resp(conn, 500, "")   
+      end
     else
       _ -> send_resp conn, 401, ""
     end
@@ -69,42 +78,54 @@ defmodule AuthServer.Controllers.OAuthController do
 
   defp handle_authorize(%{:query_params => %{"client_id" => client_id, "grant_type" => grant_type, "redirect_uri" => redirect_uri, "state" => state}} = conn) do
     with {:ok, {email, password, csrf_token}} <- fetch_credentials(conn),
-      true <- Enum.member?(["code", "id_token"], grant_type), 
+      true <- Enum.member?(["code", "id_token"], grant_type),
+      form_token when not is_nil(form_token) <- fetch_cookie(conn, @csrf_cookie_key),
+      true <- form_token == csrf_token,
+
       client_data when not is_nil(client_data) <- Repo.one(
         from c in Client, 
           left_join: cu in ClientUser, on: cu.client_id == c.id,
-          right_join: u in User, on: cu.user_id == u.id 
+          right_join: u in User, on: cu.user_id == u.id, 
           where: c.client_id == ^client_id and u.email == ^email
       ),
       true <- Enum.member?(client_data.login_redirects, redirect_uri),
-      :ok <- check_grant_type(client_data.flow),
-      form_token when not is_nil(form_token) <- fetch_cookie(conn, @csrf_cookie_key),
-      true <- form_token == csrf_token,
+      # :ok <- check_grant_type(client_data.flow, grant_type),
+
       true <- password == client_data.password
     do
       if is_nil(client_data.consent) or not consent_matches?(client_data.user_scopes, client_data.consent) do
+        # if client_data.is_banned do
+        #IO.puts client_data.banned_due
+
+        #send_resp(conn, 403, "Banned")
         consent_id = :crypto.strong_rand_bytes(24) |> Base.url_encode64
-        Cache.ConsentSessions.insert(consent_id, {client_id, clien_data.user_id, grant_type, redirect_uri, state})
+        ConsentSessions.insert(consent_id, {client_id, client_data.secret, client_data.user_id, grant_type, redirect_uri, state})
+
         conn
         |> put_resp_cookie(consent_id, Token.create(%{
-          "client_id" => client_id,
-          "user_id" => client_data.user_id,
-          "scopes" => client_data.user_scopes,
-          "consent" => client_data.consent 
-        }, 180), [http_only: true, max_age: 180, path: "/oauth/authorize", secure: true])
+            "client_id" => client_id,
+            "user_id" => client_data.user_id,
+            "scopes" => client_data.user_scopes,
+            "consent" => client_data.consent 
+          }, 180), [http_only: true, max_age: 180, path: "/oauth/authorize", secure: true])
         |> send_resp(200, "Ask user for permission for the client to access their data")
       else
-        case grant_type do
-          "code" -> ""
-          "id_token" -> ""
+        with sid <- Repo.insert!(%Session{}).id,
+          _ <- Sessions.insert(sid, [client_id])
+        do
+          res_uri = build_response_uri(redirect_uri, grant_type, client_id, client_data.secret, client_data.user_id, state)
+
+          conn
+          |> put_resp_cookie("id", Token.create(%{
+              "aud" => "https://simpleauth.org/",
+              "sub" => client_data.user_id,
+              "sid" => sid
+            }, 43200), [domain: ".simpleauth.org", http_only: true, max_age: 43200, path: "/", secure: true])
+          |> put_resp_header("location", res_uri)
+          |> send_resp(302, "")
+        else
+          _ -> send_resp(conn, 500, "")   
         end
-        conn
-        |> put_resp_cookie("id", Token.create(%{
-          "aud" => client_id,
-          "sub" => client_data.user_id
-        }, 43200), [domain: ".simpleauth.org", http_only: true, max_age: 43200, path: "/", secure: true])
-        |> put_resp_header("location", redirect_uri)
-        |> send_resp(302, "")
       end
     else
       _ -> send_resp(conn, 401, "")
@@ -129,21 +150,16 @@ defmodule AuthServer.Controllers.OAuthController do
 
   # Helpers
 
-  defp fetch_credentials(%{:req_headers => headers} = conn) do
+  defp fetch_credentials(%{:req_headers => headers}) do
     headers
-    |> Enum.find({"Authorization", _})
+    |> Enum.find({"Authorization", "_"})
     |> elem(1)
     |> String.split(" ")
     |> tl #tail
-    |> fn tail -> 
-      if length(tail) == 3 do
-        {:ok, List.to_tuple(tail)}
-      else
-        {:error, tail}
-      end
+    |> (fn tail -> if length(tail) == 3, do: {:ok, List.to_tuple(tail)}, else: {:error, tail} end).()
   end
 
-  defp fetch_cookie(%{:req_cookies => cookies} = conn, key) do
+  defp fetch_cookie(%{:req_cookies => cookies}, key) do
     cookies
     |> Map.get(key)
   end
@@ -154,4 +170,19 @@ defmodule AuthServer.Controllers.OAuthController do
     |> Enum.all?(fn s -> Enum.member?(merged, s) end)
   end
 
+  defp build_response_uri(redirect_uri, grant_type, client_id, client_secret, user_id, state) do
+    case grant_type do
+      "code" ->
+        code = :crypto.strong_rand_bytes(24) |> Base.url_encode64
+        AuthCodes.insert(code, {client_id, client_secret, user_id})
+        Enum.join([redirect_uri, "?", "code=", code, "&state=", state])
+      "id_token" ->
+        Enum. join([redirect_uri, "#", "id_token=",
+          Token.create(%{
+            "aud" => client_id,
+            "sub" => user_id
+          }),
+          "&state=", state])
+    end
+  end
 end

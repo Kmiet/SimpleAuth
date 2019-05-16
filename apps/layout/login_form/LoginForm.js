@@ -11,6 +11,7 @@ export default class LoginForm extends React.Component {
   constructor() {
     super()
     this.state = {
+      csrf_token: document.CSRF_TOKEN,
       disabledButton: true, 
       error: "", 
       email: "", 

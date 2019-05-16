@@ -3,7 +3,11 @@ defmodule Cache.Application do
   
   def start(_type, _args) do
     children = [
-      {Cache.Keys, []}
+      {Cache.AuthCodes, []},
+      {Cache.ConsentSessions, []},
+      {Cache.EmailConfirmations, []},
+      {Cache.Keys, []},
+      {Cache.Sessions, []}
     ]
 
     options = [strategy: :one_for_all, name: Cache.Supervisor]

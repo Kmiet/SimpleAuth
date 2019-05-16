@@ -1,11 +1,8 @@
+# This file is responsible for configuring your application
+# and its dependencies with the aid of the Mix.Config module.
 use Mix.Config
 
 import_config "config.secret.exs"
-import_config "test.exs"
-
-config :ecto, json_library: Jason
-config :db, ecto_repos: [Db.Repo]
-config :db, Db.Repo, migration_primary_key: [name: :id, type: :binary_id]
 
 # This configuration is loaded before any dependency and is restricted
 # to this project. If another project depends on this project, this
@@ -15,11 +12,11 @@ config :db, Db.Repo, migration_primary_key: [name: :id, type: :binary_id]
 
 # You can configure your application as:
 #
-#     config :db, key: :value
+#     config :mailer, key: :value
 #
 # and access this configuration in your application as:
 #
-#     Application.get_env(:db, :key)
+#     Application.get_env(:mailer, :key)
 #
 # You can also configure a 3rd-party app:
 #

@@ -10,7 +10,7 @@ defmodule Db.Models.ClientUser do
       field :is_banned, :boolean, default: false
       field :banned_due, :naive_datetime
       field :consent, :boolean, default: false
-      timestamps()
+      timestamps([type: :utc_datetime])
   
       belongs_to :user, User
       belongs_to :client, Client

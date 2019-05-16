@@ -16,7 +16,7 @@ defmodule Db.Models.Client do
     field :user_scopes, {:array, UserScope}
     field :login_redirects, {:array, DbURI}
     field :logout_redirects, {:array, DbURI}
-    timestamps()
+    timestamps([type: :utc_datetime])
 
     belongs_to :owner, User
   end

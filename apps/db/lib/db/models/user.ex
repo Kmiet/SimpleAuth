@@ -6,6 +6,7 @@ defmodule Db.Models.User do
   alias Db.Types.Gender
   alias Db.Models.User
 
+  @derive {Jason.Encoder, except: [:__meta__]}
   schema "users" do
     field :email, :string
     field :verified_email, :boolean, default: false
@@ -16,7 +17,7 @@ defmodule Db.Models.User do
     field :gender, Gender
     field :phone, :string
     field :password, :string
-    timestamps()
+    timestamps([type: :utc_datetime])
   end
 
   def changeset() do

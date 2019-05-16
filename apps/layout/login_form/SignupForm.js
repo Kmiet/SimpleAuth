@@ -9,7 +9,8 @@ import Button from '../components/Button'
 export default class SignUp extends React.Component {
   constructor() {
     super()
-    this.state = { 
+    this.state = {
+      csrf_token: document.CSRF_TOKEN,
       disabledButton: true,
       error: "", 
       email: "", 
@@ -24,12 +25,21 @@ export default class SignUp extends React.Component {
 
   handleChange(event) {
     if(this._isValid(event)) this.setState({ disabledButton: false, [event.target.name]: event.target.value })
-    this.setState({ disabledButton: true, [event.target.name]: event.target.value })
+    else this.setState({ disabledButton: true, [event.target.name]: event.target.value })
     console.log(this.state)
   }
 
-  handleSubmit() {
-    
+  handleSubmit(event) {
+    event.preventDefault();
+    axios.post('http://localhost:4000/signup/', {
+      csrf_token: this.state.csrf_token,
+      email: this.state.email,
+      password: this.state.password
+    }).then(response => {
+      console.log(response)
+    }).catch(err => {
+      console.log(err)
+    })
   }
 
   _isValid(event) {
