@@ -29,8 +29,19 @@ export default class LoginForm extends React.Component {
     console.log(this.state)
   }
 
-  handleSubmit() {
-    
+  handleSubmit(event) {
+    event.preventDefault()
+    const login_uri = this._buildSubmitURI()
+    //window.location.replace(login_uri)
+    axios.get(login_uri, {
+      headers: {
+        Authorization: this.state.email + " " + this.state.password + " " + this.state.csrf_token
+      }
+    }).then(response => {
+      console.log(response)
+    }).catch(err => {
+      console.log(err)
+    })
   }
 
   _isValid(event) {
@@ -40,8 +51,17 @@ export default class LoginForm extends React.Component {
   }
 
   _isEmailValid(email) {
-    const emailRegex = new RegExp("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$")
+    const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    // const emailRegex = new RegExp("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$")
     return emailRegex.test(email)
+  }
+
+  _buildSubmitURI() {
+    let queryString = window.location.search.slice(1)
+    if(queryString === "") {
+      queryString = "redirect_uri=https://accounts.simpleauth.org/"
+    }
+    return "http://localhost:4000/oauth/authorize?" + queryString
   }
 
   render() {

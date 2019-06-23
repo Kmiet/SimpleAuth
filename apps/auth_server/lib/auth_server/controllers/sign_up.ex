@@ -8,18 +8,10 @@ defmodule AuthServer.Controllers.SignUpController do
   alias Cache.EmailConfirmations
   alias Mailer.SignUpEmail
 
-  @csrf_cookie_key "ftk"
-
   plug :match
   plug :dispatch
 
-  get "/emc" do
-    IO.inspect EmailConfirmations.all
-    send_resp conn, 200, "OK"
-  end
-
   get "/confirm" do
-    conn = Plug.Conn.fetch_query_params(conn)
     with %{:query_params => %{"id" => confirmation_id}} = conn,
       uid when not is_nil(uid) <- EmailConfirmations.get(confirmation_id)
     do
@@ -35,17 +27,10 @@ defmodule AuthServer.Controllers.SignUpController do
     end
   end
 
-  get "/list" do
-    data = Repo.all(from u in User)
-    conn
-    |> put_resp_header("content-type", "application/json")
-    |> send_resp(200, Jason.encode!(data))
-  end
-
   get "/" do
     form_token = :crypto.strong_rand_bytes(24) |> Base.url_encode64
     conn
-    |> put_resp_cookie(@csrf_cookie_key, form_token, [http_only: true]) #,secure: true])
+    |> Utils.Cookies.put_csrf_cookie(form_token)
     |> put_resp_header("content-type", "text/html")
     |> send_resp(200, EEx.eval_file(
         "priv/assets/login/index.html.eex",
@@ -54,13 +39,11 @@ defmodule AuthServer.Controllers.SignUpController do
   end
 
   post "/" do
-    conn = Plug.Conn.fetch_cookies(conn)
     {:ok, body, conn} = 
-      conn 
-      |> Plug.Conn.fetch_cookies
+      conn
       |> Plug.Conn.read_body
     with {:ok, %{ "csrf_token" => csrf_token, "email" => email, "password" => password }} = Jason.decode(body),
-      form_token when not is_nil(form_token) <- fetch_cookie(conn, @csrf_cookie_key),
+      form_token when not is_nil(form_token) <- Utils.Cookies.fetch_csrf_cookie(conn),
       true <- form_token == csrf_token
     do
       with changeset <- User.changeset(
@@ -80,7 +63,7 @@ defmodule AuthServer.Controllers.SignUpController do
           |> Mailer.deliver
         end)
         conn
-        |> delete_resp_cookie(@csrf_cookie_key, [http_only: true]) #, secure: true])
+        |> Utils.Cookies.delete_csrf_cookie
         |> send_resp(201, "")
       else
         {:error, %{:errors => errors}} -> 
@@ -98,10 +81,7 @@ defmodule AuthServer.Controllers.SignUpController do
     end
   end
 
-  # Helpers
-
-  defp fetch_cookie(%{:req_cookies => cookies}, key) do
-    cookies
-    |> Map.get(key)
+  match _ do
+    send_resp(conn, 404, "")
   end
 end

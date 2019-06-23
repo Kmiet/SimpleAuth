@@ -21,8 +21,27 @@ defmodule Db.Models.Client do
     belongs_to :owner, User
   end
 
-  def changeset() do
-    
+  def changeset(user, params \\ %{}) do
+    user
+    |> cast(params, [
+      :name, 
+      :secret, 
+      :flow, 
+      :logo_uri, 
+      :style_uri, 
+      :access_config,
+      :user_scopes,
+      :login_redirects,
+      :logout_redirects,
+      :owner_id
+    ])
+    |> validate_required([
+      :login_redirects, 
+      :name, 
+      :owner_id, 
+      :secret, 
+      :user_scopes
+    ])
   end
 
 end

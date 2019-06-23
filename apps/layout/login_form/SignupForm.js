@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, Redirect } from 'react-router-dom'
 import axios from 'axios'
 
 import Form from '../components/Form'
@@ -7,7 +7,7 @@ import Input from '../components/Input'
 import Button from '../components/Button'
 
 export default class SignUp extends React.Component {
-  constructor() {
+  constructor(props) {
     super()
     this.state = {
       csrf_token: document.CSRF_TOKEN,
@@ -16,7 +16,7 @@ export default class SignUp extends React.Component {
       email: "", 
       password: "",
       confirmPassword: "",
-       
+      signedUp: false
     }
 
     this.handleChange = this.handleChange.bind(this)
@@ -36,6 +36,7 @@ export default class SignUp extends React.Component {
       email: this.state.email,
       password: this.state.password
     }).then(response => {
+      this.setState({ signedUp: true })
       console.log(response)
     }).catch(err => {
       console.log(err)
@@ -60,6 +61,10 @@ export default class SignUp extends React.Component {
   }
 
   render() {
+    if(this.state.signedUp) {
+      return <Redirect to="/login" />
+    }
+
     return (
       <Form header="Create a Free Account" error={this.state.error}>
         <Input 

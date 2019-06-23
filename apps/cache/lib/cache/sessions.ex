@@ -15,7 +15,7 @@ defmodule Cache.Sessions do
     reply = 
       case :ets.lookup(:sessions, key) do
         [] -> nil
-        [{_key, session_data}] -> session_data
+        [{_key, session_data, expiration}] -> {session_data, expiration}
       end
     {:reply, reply, state}
   end
@@ -44,7 +44,7 @@ defmodule Cache.Sessions do
     GenServer.call(SessionCache, {:get, key}, 500)
   end
 
-  def insert(key, value) do
-    GenServer.cast(SessionCache, {:insert, {key, value}})
+  def insert(key, value, expiration \\ Joken.current_time) do
+    GenServer.cast(SessionCache, {:insert, {key, value, expiration}})
   end
 end

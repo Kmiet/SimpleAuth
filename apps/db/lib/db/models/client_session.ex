@@ -1,6 +1,5 @@
-defmodule Db.Models.ClientSesison do
+defmodule Db.Models.ClientSession do
   use Db.Schema
-  import Ecto.Changeset
 
   alias Db.Repo
   alias Db.Models.{Session, Client}
@@ -13,10 +12,6 @@ defmodule Db.Models.ClientSesison do
 
     belongs_to :session, Session
     belongs_to :client, Client
-  end
-
-  def changeset() do
-    
   end
 
 end
