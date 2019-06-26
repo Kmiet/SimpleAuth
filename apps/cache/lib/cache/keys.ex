@@ -93,8 +93,8 @@ defmodule Cache.Keys do
   end
 
   defp create_hs256_signer do
-    kid = :crypto.strong_rand_bytes(@key_length) |> Base.encode64
-    signing_key = :crypto.strong_rand_bytes(@signing_key_length) |> Base.encode64
+    kid = :crypto.strong_rand_bytes(@key_length) |> Base.url_encode64
+    signing_key = :crypto.strong_rand_bytes(@signing_key_length) |> Base.url_encode64
     {kid, Joken.Signer.create("HS256", signing_key, %{"kid" => kid})}
   end
 end

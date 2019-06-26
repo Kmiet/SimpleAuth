@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" type="text/css" href="consent.css">
+  <link href="https://fonts.googleapis.com/css?family=Antic|Lato" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <script src="consent.js"></script>
+  <title>Consent</title>
+  <script>
+    document.CONSENT = {}
+    <%= for scope <- current_consent do %>
+      document.CONSENT['<%= scope %>'] = true
+    <% end %>
+    document.CLIENT_SCOPES = []
+    <%= for scope <- client_scopes do %>
+      document.CLIENT_SCOPES.push('<%= scope %>')
+    <% end %>
+  </script>
+</head>
+<body>
+  <div id="form-container">
+    <img id="client-logo-1" src="<%= client_logo %>" alt="" onerror="showDefaultLogo()" />
+    <i id="client-logo-2">public</i>
+    <p id="form-title">Give <span id="client-name"><%= client_name %></span> access to:</p>
+    <form action="/oauth/authorize?consent=<%= consent_id %>" method="post">
+      <input name="csrf_token" value="<%= csrf_token %>" hidden />
+      <div>
+        <div class="scope-container">
+          <i class="scope-icon">security</i>
+          <label class="scope-desc-container">
+            <span class="scope-name">OpenID <%= if "openid" in client_scopes do %><span class="scope-required">(required)</span><% end %></span>
+            <span class="scope-desc">Always required, Chosen Protocol</span>
+          </label>
+          <div style="flex: 1"></div>
+          <label class="input-checkbox">
+            <input type="checkbox" name="openid" onchange="validateRequired(this)" />
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="scope-container">
+          <i class="scope-icon">email</i>
+          <label class="scope-desc-container">
+            <span class="scope-name">Email <%= if "email" in client_scopes do %><span class="scope-required">(required)</span><% end %></span>
+            <span class="scope-desc">Email address</span>
+          </label>
+          <div style="flex: 1"></div>
+          <label class="input-checkbox">
+            <input type="checkbox" name="email" onchange="validateRequired(this)" />
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="scope-container">
+          <i class="scope-icon">person</i>
+          <label class="scope-desc-container">
+            <span class="scope-name">Profile <%= if "profile" in client_scopes do %><span class="scope-required">(required)</span><% end %></span>
+            <span class="scope-desc">Full Name, Birthdate, Gender, Avatar</span>
+          </label>
+          <div style="flex: 1"></div>
+          <label class="input-checkbox">
+            <input type="checkbox" name="profile" onchange="validateRequired(this)" />
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="scope-container">
+          <i class="scope-icon">phone</i>
+          <label class="scope-desc-container">
+            <span class="scope-name">Phone</span>
+            <span class="scope-desc">Phone number</span>
+          </label>
+          <div style="flex: 1"></div>
+          <label class="input-checkbox">
+            <input type="checkbox" name="phone" onchange="validateRequired(this)" />
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="scope-container">
+          <i class="scope-icon">home</i>
+          <label class="scope-desc-container">
+            <span class="scope-name">Address</span>
+            <span class="scope-desc">Home address</span>
+          </label>
+          <div style="flex: 1"></div>
+          <label class="input-checkbox">
+            <input type="checkbox" name="address" onchange="validateRequired(this)" />
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+      <input id="submit-button" type="submit" value="Accept" disabled />
+      <p style="font-family: 'Antic', sans-serif; font-size: 1rem; text-align: center; cursor: default; color: var(--color3_10_light); margin: 10px">
+        <span>2019</span>
+        <span style="color: var(--secondary_15_light)">Simple</span><span style="color: var(--primary_5_light)">Auth</span>
+      </p>
+    </form>
+  </div>
+</body>
+</html>

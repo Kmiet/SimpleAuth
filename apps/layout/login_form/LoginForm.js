@@ -24,42 +24,40 @@ export default class LoginForm extends React.Component {
 
   handleChange(event) {
     //  error state - debug only
-    if(this._isValid(event)) this.setState({ disabledButton: false, error: "", [event.target.name]: event.target.value })
-    else this.setState({ disabledButton: true, error: "Some error message", [event.target.name]: event.target.value })
+    if(this._isValid(event)) this.setState({ disabledButton: false, [event.target.name]: event.target.value })
+    else this.setState({ disabledButton: true, [event.target.name]: event.target.value })
     console.log(this.state)
   }
 
   handleSubmit(event) {
     event.preventDefault()
     const login_uri = this._buildSubmitURI()
-    //window.location.replace(login_uri)
     axios.get(login_uri, {
       headers: {
         Authorization: this.state.email + " " + this.state.password + " " + this.state.csrf_token
       }
     }).then(response => {
-      console.log(response)
+      window.location.replace(response.headers.location)
     }).catch(err => {
-      console.log(err)
+      this.setState({ email: "", error: "Invalid email or password", password: "" })
     })
   }
 
   _isValid(event) {
-    if(event.target.value && this._isEmailValid(this.state.email)) return true
-    else if(this._isEmailValid(event.target.value) && this.state.password) return true
+    if(event.target.value.length > 7 && this._isEmailValid(this.state.email)) return true
+    else if(this._isEmailValid(event.target.value) && this.state.password.length > 7) return true
     else return false
   }
 
   _isEmailValid(email) {
     const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-    // const emailRegex = new RegExp("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$")
     return emailRegex.test(email)
   }
 
   _buildSubmitURI() {
     let queryString = window.location.search.slice(1)
     if(queryString === "") {
-      queryString = "redirect_uri=https://accounts.simpleauth.org/"
+      queryString = "redirect_uri=https%3A%2F%2Faccounts.simpleauth.org%2F"
     }
     return "http://localhost:4000/oauth/authorize?" + queryString
   }

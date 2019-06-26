@@ -21,8 +21,8 @@ defmodule Db.Models.Client do
     belongs_to :owner, User
   end
 
-  def changeset(user, params \\ %{}) do
-    user
+  def changeset(client, params \\ %{}) do
+    client
     |> cast(params, [
       :name, 
       :secret, 
