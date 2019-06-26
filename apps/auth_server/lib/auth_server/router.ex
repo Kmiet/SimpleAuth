@@ -5,7 +5,7 @@ defmodule AuthServer.Router do
   alias Utils.Plugs.{QueryParamsPlug, SessionPlug}
   alias AuthServer.Controllers.{ForgotPasswordController, LogInController, OAuthController, SignUpController}
 
-  plug Plug.Static, at: "/", from: "./priv/assets/login" # from: "../layout/build/login_form"
+  plug Plug.Static, at: "/manager", from: "./priv/assets/manager" # from: "../layout/build/login_form"
 
   plug QueryParamsPlug
   # SessionPlug fetches all cookies into conn stuct
