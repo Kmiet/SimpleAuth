@@ -1,0 +1,241 @@
+:root {
+  font-family: 'Lato', sans-serif;
+  font-size: 16px;
+  height: 100%;
+  --primary: rgb(210, 140, 20);
+  --primary_25_dark: rgb(157, 105, 14);
+  --primary_5_light: rgb(233, 155, 23);
+  --secondary: #6f6f6f;
+  --form-bg: #2f2f2f;
+  --color3: #9f9f9f;
+  --form-width: 280px;
+}
+
+body {
+  margin: 0;
+  background: #1f1f1f;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-image: -webkit-linear-gradient(to bottom, #1f1f1f, #2f2f2f);
+  background-image: linear-gradient(to bottom, #1f1f1f, #2f2f2f);
+}
+
+form {
+  margin: 10vh auto 40px;
+  padding: 30px;
+  border-radius: 6px;
+  width: var(--form-width);
+  background: var(--form-bg);
+  box-shadow: 0px 0px 40px -10px #000;
+}
+
+form > p#header {
+  margin: 5px 0px 10px 0px;
+  text-align: center;
+  font-weight: 500;
+  font-size: 1.2rem;
+  color: var(--color3);
+}
+
+form > p#error {
+  margin: 8px 0px;
+  display: block;
+  border: 1.5px solid rgb(100, 0, 0);
+  border-radius: 3px;
+  padding: 8px;
+  background: rgb(150, 85, 85);
+  color: rgb(100, 0, 0);
+}
+
+label {
+  display: block;
+  position: absolute;
+  font-size: 1rem;
+  margin: -42px 0px 0px 10px;
+  padding: 3px;
+  background: var(--form-bg);
+  color: var(--color3);
+  transition: 0.2s ease-in;
+  pointer-events: none;
+}
+
+input {
+  font-size: 1rem;
+  font-family: 'Lato', sans-serif;
+  text-decoration: none;
+  width: calc(100% - 10px);
+  height: 100%;
+  background: transparent;
+  border: 1px solid var(--secondary);
+  border-radius: 2px;
+  outline: none;
+  padding: 10px 0px 10px 10px;
+  margin: 8px 0px;
+  color: var(--color3);
+  transition: 0.3s ease-in;
+}
+
+input:hover {
+  color: var(--color3);
+  border-color: var(--color3);
+}
+
+input:-webkit-autofill {
+  font-size: 1rem;
+  font-family: 'Lato', sans-serif;
+  -webkit-box-shadow: 0 0 0px 100px var(--form-bg) inset;
+  -webkit-text-fill-color: var(--color3);
+}
+
+input::placeholder {
+  font-size: 0.95rem;
+  font-family: 'Lato', sans-serif;
+  color: var(--color3);
+  opacity: 0;
+  transition: opacity 0s;
+  visibility: hidden;
+}
+
+input:focus,
+input:valid {
+  border-color: var(--primary);
+}
+
+input:focus::placeholder,
+input:valid::placeholder {
+  visibility: visible;
+  opacity: 0.5;
+  transition: opacity 0.25s ease-out 0.25s;
+}
+
+input:focus + label,
+input:valid + label {
+  font-size: 0.9rem;
+  margin: -61px 0px 0px 10px;
+  visibility: visible;
+  transition: 0.25s ease-out;
+}
+
+button {
+  display: block;
+  margin: 25px 0px 10px 0px;
+  width: var(--form-width);
+  color: var(--form-bg);
+  letter-spacing: -0.3px;
+  font-weight: 600;
+  font-family: 'Lato', sans-serif;
+  font-size: 1rem;
+  padding: 10px;
+  background: var(--primary);
+  border: none;
+  border-radius: 2px;
+  outline: none;
+  box-shadow: 0px 0px 20px -8px #000;
+  cursor: pointer;
+  transition: 0.3s ease-in;
+}
+
+button + a > button {
+  margin: 10px 0px;
+}
+
+button:hover {
+  background: var(--primary_5_light);
+}
+
+button:disabled {
+  background: var(--primary_25_dark);
+  cursor: default;
+}
+
+a {
+  display: block;
+  width: fit-content;
+  margin: 15px auto 0px auto;
+  color: var(--primary);
+  text-decoration: none;
+  transition: 0.3s ease-in;
+}
+
+a:hover {
+  color: var(--primary_5_light);
+  text-decoration: none;
+}
+
+#forgot {
+  margin: -3px 0px 0px 2px;
+  font-size: 0.8rem;
+}
+
+#signup {
+  margin: 0px auto;
+}
+
+footer {
+  text-align: center;
+  color: var(--secondary);
+  margin-top: 20px;
+  margin-left: calc(50% - var(--form-width)/2);
+  margin-right: calc(50% - var(--form-width)/2);
+}
+
+.divider {
+  margin-top: -10px;
+  position: relative;
+  width: var(--form-width);
+  height: 40px;
+  color: var(--secondary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  line-height: 50px;
+  text-align: center;
+}
+
+.divider::before,
+.divider::after {
+  position: absolute;
+  width: calc(var(--form-width)/2 - 30px);
+  height: 1px;
+  top: 24px;
+  background-color: var(--secondary);
+  content: '';
+}
+
+.divider::before {
+  left: 0;
+}
+
+.divider::after {
+  right: 0;
+}
+
+@media only screen and (max-width: 600px) {
+  :root {
+    font-size: 14px;
+  }
+
+  body {
+    background-image: none;
+  }
+
+  form {
+    margin: 0px auto 30px;
+    padding: 30px 20px;
+    box-shadow: none;
+    background: transparent;
+  }
+
+  label {
+    margin: -39px 0px 0px 10px;
+    background: #1f1f1f;
+  }
+
+  input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0px 100px #1f1f1f inset;
+  }
+
+  input:focus + label,
+  input:valid + label {
+    margin: -58px 0px 0px 10px;
+  }
+}

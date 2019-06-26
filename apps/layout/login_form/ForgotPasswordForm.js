@@ -12,7 +12,8 @@ export default class ForgotPasswordForm extends React.Component {
     this.state = { 
       disabledButton: true,
       email: "",
-      emailSent: false
+      emailSent: false,
+      csrf_token: document.CSRF_TOKEN
     }
 
     this.handleChange = this.handleChange.bind(this)
@@ -20,13 +21,26 @@ export default class ForgotPasswordForm extends React.Component {
   }
 
   handleChange(event) {
-    if(this._isValid(event)) this.setState({ disabledButton: false, [event.target.name]: event.target.value })
-    this.setState({ disabledButton: true, [event.target.name]: event.target.value })
+    if(this._isValid(event)){
+      this.setState({ disabledButton: false, [event.target.name]: event.target.value })
+    } else {
+      this.setState({ disabledButton: true, [event.target.name]: event.target.value })
+    }
+    //this.setState({ disabledButton: true, [event.target.name]: event.target.value })
     console.log(this.state)
   }
 
   handleSubmit() {
-    
+    event.preventDefault();
+    axios.post('http://localhost:4000/forgot-password/', {
+      csrf_token: this.state.csrf_token,
+      email: this.state.email
+    }).then(response => {
+      this.setState({ emailSent: true })
+      console.log(response)
+    }).catch(err => {
+      console.log(err)
+    })
   }
 
   _isValid(event) {
@@ -34,7 +48,7 @@ export default class ForgotPasswordForm extends React.Component {
   }
 
   _isEmailValid(email) {
-    const emailRegex = new RegExp('^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
+    const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     return emailRegex.test(email)
   }
 

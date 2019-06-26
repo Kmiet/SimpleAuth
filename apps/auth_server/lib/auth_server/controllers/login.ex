@@ -1,7 +1,7 @@
 defmodule AuthServer.Controllers.LogInController do
   use Plug.Router
 
-  plug Plug.Static, at: "/", from: "./priv/assets/login" 
+  plug Plug.Static, at: "/", from: "priv/assets/login" 
 
   plug :match
   plug :dispatch

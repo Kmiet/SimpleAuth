@@ -55,4 +55,23 @@ module.exports = [{
     "react-dom": "ReactDOM",
     "react-router-dom": "ReactRouterDOM"
   }
+}, {
+  entry: __dirname + '/password_manager/index.js',
+  module: {
+    rules: [
+      { test: /\.js$/, loader: 'babel-loader', exclude: [/node_modules/, /public/] },
+      { test: /\.jsx$/, loader: 'babel-loader', exclude: [/node_modules/, /public/] },
+      { test: /\.css$/, loader: 'style-loader!css-loader', exclude: [/node_modules/, /public/] }
+    ]
+  },
+  output: {
+    filename: 'bundle.js',
+    path: __dirname + '/build/password_manager'
+  },
+  externals: {
+    "axios": "axios",
+    "react": "React",
+    "react-dom": "ReactDOM",
+    "react-router-dom": "ReactRouterDOM"
+  }
 }];

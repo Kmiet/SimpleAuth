@@ -7,7 +7,8 @@ defmodule Cache.Application do
       {Cache.ConsentSessions, []},
       {Cache.EmailConfirmations, []},
       {Cache.Keys, []},
-      {Cache.Sessions, []}
+      {Cache.Sessions, []},
+      {Cache.PasswordResets, []},
     ]
 
     options = [strategy: :one_for_all, name: Cache.Supervisor]
